@@ -6,7 +6,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../app_colors.dart';
-import '../../data/api_manger.dart';
 import '../custom_text_form-field.dart';
 
 class Signup extends StatefulWidget {
@@ -145,7 +144,7 @@ class _SignupState extends State<Signup> {
                                           MaterialStateProperty.all(
                                               Colors.white)),
                                   onPressed: () {
-                                    register();
+                                    cubit.register();
                                   },
                                   child: Text(
                                     'SignUp',
@@ -166,30 +165,5 @@ class _SignupState extends State<Signup> {
         ),
       ),
     );
-  }
-
-  void register() async {
-    if (cubit.formKey.currentState?.validate() == true) {
-      try {
-        cubit.emit(RegisterLoadingState());
-        var response = await ApiManager.register(
-          cubit.emailController.text,
-          cubit.nameController.text,
-          cubit.mobileNumberController.text,
-          cubit.passwordController.text,
-          cubit.confirmPasswordController.text,
-        );
-        if (response.statusMsg == 'fail') {
-          cubit.emit(RegisterErrorState(
-              errorMessage: response.message ?? response.message!));
-        } else {
-          cubit.emit(RegisterSuccessState(response: response));
-        }
-      } catch (e) {
-        // Log the error or display a user-friendly error message
-        print('Error registering user: $e');
-        cubit.emit(RegisterErrorState(errorMessage: e.toString()));
-      }
-    }
   }
 }

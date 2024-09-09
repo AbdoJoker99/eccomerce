@@ -1,10 +1,12 @@
 import 'dart:convert';
 
-import 'package:ecomm/data/model/Register_Response.dart';
+import 'package:ecomm/data/model/request/loginRequest.dart';
+import 'package:ecomm/data/model/response/Register_Response.dart';
+import 'package:ecomm/data/model/response/login_Response.dart';
 import 'package:http/http.dart' as http;
 
 import 'end_points.dart';
-import 'model/Register_Request.dart';
+import 'model/request/Register_Request.dart';
 
 class ApiManager {
   static const String baseUrl = 'ecommerce.routemisr.com';
@@ -22,10 +24,26 @@ class ApiManager {
       rePassword: rePassword,
     );
     try {
-      var response = await http.post(url, body: registerRequest.toJson());
+      var response = await http.post(url, body: RegisterRequest().toJson());
       var bodyString = response.body;
       jsonDecode(bodyString);
       return RegisterResponse.fromJson(json);
+    } catch (e) {
+      throw e;
+    }
+  }
+
+  static Future<LoginResponse> login(String email, String password) async {
+    Uri url = Uri.https(baseUrl, EndPoints.login);
+    var loginRequest = (
+      email: email,
+      password: password,
+    );
+    try {
+      var response = await http.post(url, body: LoginRequest().toJson());
+      var bodyStringlogin = response.body;
+      jsonDecode(bodyStringlogin);
+      return LoginResponse.fromJson(json);
     } catch (e) {
       throw e;
     }
