@@ -1,6 +1,7 @@
 import 'package:ecomm/auth/regestration/cubit/Register_cubit.dart';
 import 'package:ecomm/auth/regestration/cubit/redister_states.dart';
 import 'package:ecomm/dialog_utils.dart';
+import 'package:ecomm/homescreen/home_Screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -16,7 +17,8 @@ class Signup extends StatefulWidget {
 }
 
 class _SignupState extends State<Signup> {
-  RegisterCubit cubit = RegisterCubit();
+  RegisterCubit cubit = RegisterCubit(); // Create an instance of RegisterCubit
+  bool _obscureText = true; // For controlling password visibility
 
   @override
   Widget build(BuildContext context) {
@@ -38,6 +40,7 @@ class _SignupState extends State<Signup> {
               context: context,
               content: 'Registration successful!',
             );
+            Navigator.of(context).pushNamed(HomeScreen.routeName);
           }
         },
         child: Scaffold(
@@ -62,11 +65,11 @@ class _SignupState extends State<Signup> {
                           child: Column(
                             children: [
                               CustomTextFormField(
-                                label: 'enter your full name',
+                                label: 'Enter your full name',
                                 controller: cubit.nameController,
                                 validator: (text) {
                                   if (text == null || text.trim().isEmpty) {
-                                    return "please enter your name";
+                                    return "Please enter your name";
                                   }
                                   return null;
                                 },
@@ -74,84 +77,102 @@ class _SignupState extends State<Signup> {
                                 feildName: 'Full Name',
                               ),
                               CustomTextFormField(
-                                label: 'enter your mobile number',
+                                label: 'Enter your mobile number',
                                 controller: cubit.mobileNumberController,
                                 validator: (text) {
                                   if (text == null || text.trim().isEmpty) {
-                                    return "please enter your mobile number";
+                                    return "Please enter your mobile number";
                                   }
                                   return null;
                                 },
                                 obscureText: false,
-                                feildName: 'Mobile number',
+                                feildName: 'Mobile Number',
                               ),
                               CustomTextFormField(
-                                label: 'enter your email',
+                                label: 'Enter your email',
                                 controller: cubit.emailController,
                                 validator: (text) {
                                   if (text == null || text.trim().isEmpty) {
-                                    return "please enter your email";
+                                    return "Please enter your email";
                                   }
                                   final bool emailValid = RegExp(
-                                          r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_^{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
+                                          r"^[a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
                                       .hasMatch(text);
                                   if (!emailValid) {
-                                    return "please enter valid email";
+                                    return "Please enter a valid email";
                                   }
                                   return null;
                                 },
                                 obscureText: false,
-                                feildName: 'E-mail address',
+                                feildName: 'Email Address',
                               ),
                               CustomTextFormField(
-                                label: 'password',
+                                label: 'Password',
                                 controller: cubit.passwordController,
                                 validator: (text) {
                                   if (text == null || text.trim().isEmpty) {
-                                    return "please enter your password";
+                                    return "Please enter your password";
                                   }
                                   if (text.length < 6) {
-                                    return "password cannot be less than 6 characters";
+                                    return "Password cannot be less than 6 characters";
                                   }
                                   return null;
                                 },
-                                obscureText: true,
-                                feildName: 'password',
+                                feildName: 'Password',
+                                obscureText: _obscureText,
+                                suffixIcon: IconButton(
+                                  onPressed: () {
+                                    setState(() {
+                                      _obscureText = !_obscureText;
+                                    });
+                                  },
+                                  icon: Icon(
+                                    _obscureText
+                                        ? Icons.visibility_off
+                                        : Icons.visibility,
+                                    color: Colors.grey,
+                                  ),
+                                ),
                               ),
                               CustomTextFormField(
-                                label: 'confirm password',
+                                label: 'Confirm Password',
                                 controller: cubit.confirmPasswordController,
                                 validator: (text) {
                                   if (text == null || text.trim().isEmpty) {
-                                    return "please enter confirm password";
+                                    return "Please enter confirm password";
                                   }
                                   if (text.length < 6) {
-                                    return "password cannot be less than 6 characters";
+                                    return "Password cannot be less than 6 characters";
                                   }
                                   if (text != cubit.passwordController.text) {
-                                    return "confirm password does not match try again!";
+                                    return "Confirm password does not match!";
                                   }
                                   return null;
                                 },
                                 obscureText: true,
-                                feildName: 'Confirm password',
+                                feildName: 'Confirm Password',
                               ),
                               Padding(
                                 padding: const EdgeInsets.all(15.0),
                                 child: ElevatedButton(
                                   style: ButtonStyle(
-                                      backgroundColor:
-                                          MaterialStateProperty.all(
-                                              Colors.white)),
+                                    backgroundColor:
+                                        MaterialStateProperty.all(Colors.white),
+                                  ),
                                   onPressed: () {
-                                    cubit.register();
+                                    if (cubit.formKey.currentState
+                                            ?.validate() ==
+                                        true) {
+                                      cubit
+                                          .register(); // Trigger registration on valid form
+                                    }
                                   },
                                   child: Text(
-                                    'SignUp',
+                                    'Sign Up',
                                     style: TextStyle(color: Colors.blueAccent),
                                   ),
                                 ),
-                              )
+                              ),
                             ],
                           ),
                         ),

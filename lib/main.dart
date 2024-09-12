@@ -4,7 +4,11 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import 'auth/login/login.dart';
 import 'auth/regestration/sign_Up.dart';
+import 'homescreen/cart_screen/cart_screen.dart';
 import 'homescreen/home_Screen.dart';
+import 'homescreen/productlist/ProductListTab.dart';
+import 'homescreen/productlist/widgets/product_details_view.dart';
+import 'homescreen/profile/ProfileTab.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -31,6 +35,10 @@ class MyApp extends StatelessWidget {
             Signup.routeName: (context) => Signup(),
             Login.routeName: (context) => Login(),
             SplashScreen.routeName: (context) => SplashScreen(),
+            ProductDescription.routeName: (context) => ProductDescription(),
+            Profiletab.routeName: (context) => Profiletab(),
+            Productlisttab.routeName: (context) => Productlisttab(),
+            CartScreen.routeName: (context) => CartScreen(),
           },
         );
       },

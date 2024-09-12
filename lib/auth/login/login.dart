@@ -7,6 +7,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../dialog_utils.dart';
 import '../../homescreen/home_Screen.dart';
 import '../custom_text_form-field.dart';
+import '../regestration/sign_Up.dart';
 import 'login_cubit/login_cubit.dart';
 
 class Login extends StatefulWidget {
@@ -17,7 +18,8 @@ class Login extends StatefulWidget {
 }
 
 class _LoginState extends State<Login> {
-  loginCubit logincubit = loginCubit();
+  loginCubit logincubit = loginCubit(); // Create an instance of the loginCubit
+  bool _obscureText = true; // For controlling password visibility
 
   @override
   Widget build(BuildContext context) {
@@ -36,8 +38,9 @@ class _LoginState extends State<Login> {
           DialogUtils.hideLoading(context);
           DialogUtils.showMessage(
             context: context,
-            content: ' lodin successful!',
+            content: 'Login successful!',
           );
+          Navigator.of(context).pushNamed(HomeScreen.routeName);
         }
       },
       child: Scaffold(
@@ -52,101 +55,125 @@ class _LoginState extends State<Login> {
                       top: 91.h, bottom: 46.h, left: 97.w, right: 97.w),
                   child: Image.asset('assets/images/route.png'),
                 ),
-                Positioned(
-                  left: 10,
-                  child: Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 18),
-                    child: Text(
-                      "Welcome back to route",
-                      style: TextStyle(
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 18),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        "Welcome back to Route",
+                        style: TextStyle(
                           color: AppColors.whiteColor,
                           fontSize: 18,
-                          fontWeight: FontWeight.bold),
-                    ),
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
                 Padding(
                   padding: EdgeInsets.only(bottom: 30.h),
-                  child: Text(
-                    "please sign in with your email",
-                    style: TextStyle(color: AppColors.whiteColor),
+                  child: Container(
+                    margin: EdgeInsets.all(15.0),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          "Please sign in with your email",
+                          style: TextStyle(color: AppColors.whiteColor),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
                 Padding(
                   padding: EdgeInsets.symmetric(horizontal: 16),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      Form(
-                        key: logincubit.formKey,
-                        child: Column(
-                          children: [
-                            CustomTextFormField(
-                              feildName: "UserName",
-                              label: 'Email',
-                              controller: logincubit.emailController,
-                              validator: (text) {
-                                if (text == null || text.trim().isEmpty) {
-                                  return "Please enter your email";
-                                }
-                                final bool emailValid = RegExp(
-                                        r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_^{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
-                                    .hasMatch(text);
-                                if (!emailValid) {
-                                  return "Please enter a valid email";
-                                }
-                                return null;
-                              },
-                              obscureText: false,
-                            ),
-                            CustomTextFormField(
-                              feildName: "Password",
-                              label: 'Password',
-                              controller: logincubit.passwordController,
-                              validator: (text) {
-                                if (text == null || text.trim().isEmpty) {
-                                  return "Please enter your password";
-                                }
-                                if (text.length < 6) {
-                                  return "Password cannot be less than 6 characters";
-                                }
-                                return null;
-                              },
-                              obscureText: true,
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.all(10.0),
-                              child: ElevatedButton(
-                                style: ButtonStyle(
-                                  backgroundColor:
-                                      MaterialStateProperty.all(Colors.white),
-                                ),
-                                onPressed: () {
-                                  Navigator.of(context)
-                                      .pushNamed(HomeScreen.routeName);
-                                },
-                                child: const Text('Login',
-                                    style: TextStyle(color: Colors.blueAccent)),
-                              ),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.all(15.0),
-                              child: TextButton(
-                                onPressed: () {
-                                  logincubit.Login();
-                                },
-                                child: const Text(
-                                  'Don’t have an account? Create Account',
-                                  style: TextStyle(
-                                      fontSize: 20,
-                                      color: AppColors.whiteColor),
-                                ),
-                              ),
-                            ),
-                          ],
+                  child: Form(
+                    key: loginCubit.formKey,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        CustomTextFormField(
+                          feildName: "Email",
+                          label: 'Enter your email',
+                          controller: logincubit.emailController,
+                          validator: (text) {
+                            if (text == null || text.trim().isEmpty) {
+                              return "Please enter your email";
+                            }
+                            final bool emailValid = RegExp(
+                                    r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_^{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
+                                .hasMatch(text);
+                            if (!emailValid) {
+                              return "Please enter a valid email";
+                            }
+                            return null;
+                          },
+                          obscureText: false,
                         ),
-                      ),
-                    ],
+                        CustomTextFormField(
+                          feildName: "Password",
+                          label: 'Enter your password',
+                          controller: logincubit.passwordController,
+                          validator: (text) {
+                            if (text == null || text.trim().isEmpty) {
+                              return "Please enter your password";
+                            }
+                            if (text.length < 6) {
+                              return "Password cannot be less than 6 characters";
+                            }
+                            return null;
+                          },
+                          obscureText: _obscureText,
+                          suffixIcon: IconButton(
+                            onPressed: () {
+                              setState(() {
+                                _obscureText = !_obscureText;
+                              });
+                            },
+                            icon: Icon(
+                              _obscureText
+                                  ? Icons.visibility_off
+                                  : Icons.visibility,
+                              color: Colors.blue,
+                            ),
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.all(10.0),
+                          child: ElevatedButton(
+                            style: ButtonStyle(
+                              backgroundColor:
+                                  MaterialStateProperty.all(Colors.white),
+                            ),
+                            onPressed: () {
+                              if (loginCubit.formKey.currentState?.validate() ==
+                                  true) {
+                                logincubit
+                                    .Login(); // Trigger login on valid form
+                              }
+                            },
+                            child: const Text(
+                              'Login',
+                              style: TextStyle(color: Colors.blueAccent),
+                            ),
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.all(15.0),
+                          child: TextButton(
+                            onPressed: () {
+                              Navigator.of(context).pushNamed(Signup.routeName);
+                            },
+                            child: const Text(
+                              'Don’t have an account? Create Account',
+                              style: TextStyle(
+                                  fontSize: 20, color: AppColors.whiteColor),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ],

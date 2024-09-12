@@ -1,9 +1,7 @@
 import 'dart:async';
 
+import 'package:ecomm/homescreen/home_Screen.dart';
 import 'package:flutter/material.dart';
-
-import 'auth/login/login.dart';
-
 
 class SplashScreen extends StatelessWidget {
   static const String routeName = 'splash screen';
@@ -11,7 +9,7 @@ class SplashScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Timer(Duration(seconds: 3), () {
-      Navigator.of(context).pushReplacementNamed(Login.routeName);
+      Navigator.of(context).pushReplacementNamed(HomeScreen.routeName);
     }); // Timer
     return Scaffold(
       body: Image.asset(
