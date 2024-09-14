@@ -1,3 +1,4 @@
+import 'package:ecomm/Data/model/response/ProductResponse.dart';
 import 'package:ecomm/app_colors.dart';
 import 'package:ecomm/homescreen/productlist/widgets/size&color/ColorButton.dart';
 import 'package:ecomm/homescreen/productlist/widgets/size&color/SizeButton.dart';
@@ -33,6 +34,7 @@ class _ProductDescriptionState extends State<ProductDescription> {
   ];
   @override
   Widget build(BuildContext context) {
+    var args = ModalRoute.of(context)?.settings.arguments as Product;
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
@@ -70,20 +72,16 @@ class _ProductDescriptionState extends State<ProductDescription> {
                   initialPage: 0,
                   indicatorColor: Colors.blue,
                   indicatorBackgroundColor: Colors.grey,
-                  children: [
-                    Image.asset(
-                      'assets/images/Property 1=Default.png',
-                      fit: BoxFit.cover,
-                    ),
-                    Image.asset(
-                      'assets/images/Frame 59.png',
-                      fit: BoxFit.cover,
-                    ),
-                    Image.asset(
-                      'assets/images/Frame 60.png',
-                      fit: BoxFit.cover,
-                    ),
-                  ],
+                  children: args.images!
+                      .map(
+                        (url) => Image.network(
+                          url,
+                          fit: BoxFit.cover,
+                          height: 300.h,
+                          width: double.infinity,
+                        ),
+                      )
+                      .toList(),
                   onPageChanged: (value) {
                     print('Page changed: $value');
                   },

@@ -71,6 +71,7 @@ class ProductlisttabState extends State<Productlisttab> {
                           onTap: () {
                             Navigator.of(context).pushNamed(
                               ProductDescription.routeName,
+                              arguments: viewModel.productList![index],
                             );
                           },
                           child: GridViewCardItem(

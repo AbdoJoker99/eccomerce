@@ -22,7 +22,9 @@ class ProductViewModel extends Cubit<Productstate> {
       } else {
         print('Products fetched: ${response.data}');
         productList = response.data ?? [];
-        emit(ProductTabSuccsesstate(productResponse: response));
+        if (productList != null) {
+          emit(ProductTabSuccsesstate(productResponse: response));
+        }
       }
     } catch (e) {
       print('Exception: $e');
