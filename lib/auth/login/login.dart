@@ -18,13 +18,19 @@ class Login extends StatefulWidget {
 }
 
 class _LoginState extends State<Login> {
-  loginCubit logincubit = loginCubit(); // Create an instance of the loginCubit
+  loginCubit login = loginCubit(); // Create an instance of the LoginCubit
   bool _obscureText = true; // For controlling password visibility
+
+  @override
+  void dispose() {
+    login.close(); // Clean up the BLoC
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     return BlocListener<loginCubit, loginStates>(
-      bloc: logincubit,
+      bloc: login,
       listener: (context, state) {
         if (state is loginLoadingState) {
           DialogUtils.showLoading(context, 'Waiting...');
@@ -96,7 +102,7 @@ class _LoginState extends State<Login> {
                         CustomTextFormField(
                           feildName: "Email",
                           label: 'Enter your email',
-                          controller: logincubit.emailController,
+                          controller: login.emailController,
                           validator: (text) {
                             if (text == null || text.trim().isEmpty) {
                               return "Please enter your email";
@@ -114,7 +120,7 @@ class _LoginState extends State<Login> {
                         CustomTextFormField(
                           feildName: "Password",
                           label: 'Enter your password',
-                          controller: logincubit.passwordController,
+                          controller: login.passwordController,
                           validator: (text) {
                             if (text == null || text.trim().isEmpty) {
                               return "Please enter your password";
@@ -149,8 +155,7 @@ class _LoginState extends State<Login> {
                             onPressed: () {
                               if (loginCubit.formKey.currentState?.validate() ==
                                   true) {
-                                logincubit
-                                    .Login(); // Trigger login on valid form
+                                login.Login(); // Trigger login on valid form
                               }
                             },
                             child: const Text(

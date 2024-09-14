@@ -1,5 +1,7 @@
 import 'dart:convert';
 
+import 'package:ecomm/Data/model/response/ProductResponse.dart';
+import 'package:ecomm/Data/model/response/categoryOrBrandResponse.dart';
 import 'package:ecomm/data/model/request/loginRequest.dart';
 import 'package:ecomm/data/model/response/Register_Response.dart';
 import 'package:ecomm/data/model/response/login_Response.dart';
@@ -71,6 +73,60 @@ class ApiManager {
       }
     } catch (e) {
       throw Exception('Error logging in: $e');
+    }
+  }
+
+  static Future<CategoryOrBrandResponse> getAllCategories() async {
+    Uri url = Uri.https(
+      baseUrl,
+      EndPoints.getAllCategories,
+    );
+    try {
+      var response = await http.get(url);
+
+      var bodyString = response.body;
+
+      var json = jsonDecode(bodyString);
+
+      return CategoryOrBrandResponse.fromJson(json);
+    } catch (e) {
+      throw e;
+    }
+  }
+
+  static Future<CategoryOrBrandResponse> getAllBrands() async {
+    Uri url = Uri.https(
+      baseUrl,
+      EndPoints.getAllBrands,
+    );
+    try {
+      var response = await http.get(url);
+
+      var bodyString = response.body;
+
+      var json = jsonDecode(bodyString);
+
+      return CategoryOrBrandResponse.fromJson(json);
+    } catch (e) {
+      throw e;
+    }
+  }
+
+  static Future<ProductResponse> getAllProducts() async {
+    Uri url = Uri.https(
+      baseUrl,
+      EndPoints.getAllProducts,
+    );
+    try {
+      var response = await http.get(url);
+
+      var bodyString = response.body;
+
+      var json = jsonDecode(bodyString);
+
+      return ProductResponse.fromJson(json);
+    } catch (e) {
+      throw e;
     }
   }
 }

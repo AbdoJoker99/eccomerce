@@ -1,3 +1,4 @@
+import 'package:ecomm/homescreen/Productlist/ProductListTab.dart';
 import 'package:ecomm/splashscreen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -6,7 +7,6 @@ import 'auth/login/login.dart';
 import 'auth/regestration/sign_Up.dart';
 import 'homescreen/cart_screen/cart_screen.dart';
 import 'homescreen/home_Screen.dart';
-import 'homescreen/productlist/ProductListTab.dart';
 import 'homescreen/productlist/widgets/product_details_view.dart';
 import 'homescreen/profile/ProfileTab.dart';
 
@@ -29,7 +29,7 @@ class MyApp extends StatelessWidget {
       builder: (context, child) {
         return MaterialApp(
           debugShowCheckedModeBanner: false,
-          initialRoute: SplashScreen.routeName,
+          initialRoute: HomeScreen.routeName,
           routes: {
             HomeScreen.routeName: (context) => HomeScreen(),
             Signup.routeName: (context) => Signup(),
