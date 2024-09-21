@@ -1,14 +1,18 @@
 import 'dart:convert';
 
+import 'package:dartz/dartz.dart';
+import 'package:ecomm/Data/model/failures.dart';
 import 'package:ecomm/Data/model/response/ProductResponse.dart';
 import 'package:ecomm/Data/model/response/categoryOrBrandResponse.dart';
 import 'package:ecomm/data/model/request/loginRequest.dart';
 import 'package:ecomm/data/model/response/Register_Response.dart';
 import 'package:ecomm/data/model/response/login_Response.dart';
+import 'package:ecomm/share_prefrance_utils.dart';
 import 'package:http/http.dart' as http;
 
 import 'end_points.dart';
 import 'model/request/Register_Request.dart';
+import 'model/response/AddCartResponse.dart';
 
 class ApiManager {
   static const String baseUrl = 'ecommerce.routemisr.com';
@@ -16,7 +20,6 @@ class ApiManager {
   // Register method
   static Future<RegisterResponse> register(String name, String email,
       String password, String phone, String rePassword) async {
-    Uri url = Uri.https(baseUrl, EndPoints.signUp);
     var registerRequest = RegisterRequest(
       name: name,
       email: email,
@@ -24,55 +27,34 @@ class ApiManager {
       phone: phone,
       rePassword: rePassword,
     );
-
+    Uri url = Uri.https(baseUrl, EndPoints.signUp);
     try {
-      print('Making request to: $url'); // Debugging line
-      var response = await http.post(
-        url,
-        body: jsonEncode(registerRequest.toJson()), // Encode request as JSON
-      );
+      var response = await http.post(url, body: registerRequest.toJson());
 
-      print('Response status: ${response.statusCode}'); // Debugging line
+      var bodyString = response.body;
 
-      // Check if the response status code is 2xx
-      if (response.statusCode >= 200 && response.statusCode < 300) {
-        var registerResponse = jsonDecode(response.body);
-        return RegisterResponse.fromJson(registerResponse);
-      } else {
-        // Handle errors like 4xx or 5xx
-        var errorResponse = jsonDecode(response.body);
-        throw Exception('Failed to register: ${errorResponse['message']}');
-      }
+      var json = jsonDecode(bodyString);
+
+      return RegisterResponse.fromJson(json);
     } catch (e) {
-      throw Exception('Error registering: $e');
+      throw e;
     }
   }
 
   // Login method
   static Future<LoginResponse> login(String email, String password) async {
-    Uri url = Uri.https(baseUrl, EndPoints.login);
     var loginRequest = LoginRequest(email: email, password: password);
-
+    Uri url = Uri.https(baseUrl, EndPoints.login);
     try {
-      print('Making request to: $url'); // Debugging line
-      var response = await http.post(
-        url,
-        body: jsonEncode(loginRequest.toJson()), // Encode request as JSON
-      );
+      var response = await http.post(url, body: loginRequest.toJson());
 
-      print('Response status: ${response.statusCode}'); // Debugging line
+      var bodyString = response.body;
 
-      // Check if the response status code is 2xx
-      if (response.statusCode >= 200 && response.statusCode < 300) {
-        var loginResponse = jsonDecode(response.body);
-        return LoginResponse.fromJson(loginResponse);
-      } else {
-        // Handle errors like 4xx or 5xx
-        var errorResponse = jsonDecode(response.body);
-        throw Exception('Failed to login: ${errorResponse['message']}');
-      }
+      var json = jsonDecode(bodyString);
+
+      return LoginResponse.fromJson(json);
     } catch (e) {
-      throw Exception('Error logging in: $e');
+      throw e;
     }
   }
 
@@ -127,6 +109,43 @@ class ApiManager {
       return ProductResponse.fromJson(json);
     } catch (e) {
       throw e;
+    }
+  }
+
+  static Future<Either<Failures, AddCartResponse>> addToCart(
+      String productId) async {
+    Uri url = Uri.https(baseUrl, EndPoints.addToCart);
+
+    try {
+      // Retrieve the token safely
+      var token = SharedPreferenceUtils.getData(key: "token");
+
+      if (token == null || token.toString().isEmpty) {
+        return Left(ServerError(errorMessage: "Token not found or invalid"));
+      }
+
+      var response = await http.post(
+        url,
+        body: {"productId": productId},
+        headers: {"Authorization": "Bearer ${token.toString()}"},
+      );
+
+      // Handle the HTTP status codes properly
+      if (response.statusCode >= 200 && response.statusCode < 300) {
+        var json = jsonDecode(response.body);
+        var addCartResponse = AddCartResponse.fromJson(json);
+        return Right(addCartResponse);
+      } else if (response.statusCode == 401) {
+        return Left(ServerError(errorMessage: "Unauthorized: Invalid token"));
+      } else {
+        // Decode the error message from the response
+        var json = jsonDecode(response.body);
+        String errorMessage = json['message'] ?? 'Unknown error';
+        return Left(ServerError(errorMessage: "Error: $errorMessage"));
+      }
+    } catch (e) {
+      // Catching exceptions
+      return Left(ServerError(errorMessage: "Exception: ${e.toString()}"));
     }
   }
 }

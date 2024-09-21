@@ -1,10 +1,19 @@
 import 'package:flutter/material.dart';
 
+import '../../Productlist/cubit/ProductViewmodel.dart';
 import '../../cart_screen/cart_screen.dart';
 
-class CustomSearchWithShoppingCart extends StatelessWidget {
+class CustomSearchWithShoppingCart extends StatefulWidget {
   const CustomSearchWithShoppingCart({Key? key}) : super(key: key);
 
+  @override
+  State<CustomSearchWithShoppingCart> createState() =>
+      _CustomSearchWithShoppingCartState();
+}
+
+class _CustomSearchWithShoppingCartState
+    extends State<CustomSearchWithShoppingCart> {
+  ProductViewModel viewModel = ProductViewModel();
   @override
   Widget build(BuildContext context) {
     return Row(
@@ -38,7 +47,7 @@ class CustomSearchWithShoppingCart extends StatelessWidget {
                 Navigator.of(context).pushNamed(CartScreen.routeName);
               },
               child: Badge(
-                label: Text("*"),
+                label: Text(viewModel.numOfCartItems.toString()),
                 child: Icon(Icons.shopping_cart),
               ),
             )),

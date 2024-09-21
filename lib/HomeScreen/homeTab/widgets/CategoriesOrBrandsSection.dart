@@ -20,6 +20,7 @@ class _CategoriesOrBrandsSectionState extends State<CategoriesOrBrandsSection> {
     return Container(
       height: 200.h,
       child: GridView.builder(
+        scrollDirection: Axis.horizontal,
         itemCount:
             widget.categoriesList.length, // Use the actual length of the list
         itemBuilder: (context, index) {

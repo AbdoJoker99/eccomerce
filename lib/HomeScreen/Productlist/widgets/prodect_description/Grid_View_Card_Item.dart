@@ -1,9 +1,14 @@
-import 'package:ecomm/Data/model/response/ProductResponse.dart';
+import 'package:ecomm/HomeScreen/Productlist/cubit/ProductState.dart';
+import 'package:ecomm/HomeScreen/Productlist/cubit/ProductViewmodel.dart';
+import 'package:ecomm/app_colors.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart'; // Import this for BlocBuilder
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
+import '../../../../Data/model/response/ProductResponse.dart';
+
 class GridViewCardItem extends StatefulWidget {
-  Product product;
+  final Product product;
   GridViewCardItem({required this.product});
 
   @override
@@ -11,115 +16,158 @@ class GridViewCardItem extends StatefulWidget {
 }
 
 class _GridViewCardItemState extends State<GridViewCardItem> {
+  bool _isFavorited = false; // To track the favorite state
+
   @override
   Widget build(BuildContext context) {
-    return Card(
-      elevation: 4,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(10),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Image section
-          Stack(
-            children: [
-              Image.network(
-                widget.product.imageCover ??
-                    "", // Replace with actual image URL
-                height: 100.h,
-                width: double.infinity,
-                fit: BoxFit.cover,
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        return OrientationBuilder(
+          builder: (context, orientation) {
+            return Card(
+              elevation: 4,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10),
               ),
-              Positioned(
-                top: 2,
-                right: 2,
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    shape: BoxShape.circle, // To make the container circular
-                    border: Border.all(
-                      color: Colors.white, // White border
-                      width: 0.5, // Border width
-                    ),
-                  ),
-                  child: IconButton(
-                    onPressed: () {},
-                    icon: Icon(
-                      Icons.favorite_border,
-                      color: Colors.blue, // Icon color
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          ),
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  widget.product.title ?? "",
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                SizedBox(height: 5.h),
-                Text(
-                  "EGP ${widget.product.price}", // Product price
-                  style: TextStyle(
-                    fontSize: 14,
-                    color: Colors.green,
-                  ),
-                ),
-                SizedBox(height: 5),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Row(
+                    // Image section
+                    Stack(
                       children: [
-                        Icon(
-                          Icons.star,
-                          color: Colors.yellow,
-                          size: 16,
+                        Image.network(
+                          widget.product.imageCover ?? "",
+                          height: constraints.maxHeight * 0.3,
+                          width: double.infinity,
+                          fit: BoxFit.cover,
+                          errorBuilder: (context, error, stackTrace) =>
+                              Icon(Icons.error),
                         ),
-                        SizedBox(width: 5.w),
-                        Text(
-                          "${widget.product.ratingsAverage}", // Number of reviews
-                          style: TextStyle(
-                            fontSize: 12,
-                            color: Colors.grey,
-                          ),
-                        ),
-                        Text(
-                          "${widget.product.ratingsQuantity}", // Number of reviews
-                          style: TextStyle(
-                            fontSize: 12,
-                            color: Colors.grey,
+                        Positioned(
+                          top: 2,
+                          right: 2,
+                          child: GestureDetector(
+                            onTap: () {
+                              setState(() {
+                                _isFavorited = !_isFavorited;
+                              });
+                            },
+                            child: Container(
+                              width: 40.w,
+                              height: 40.h,
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: Colors.white,
+                              ),
+                              child: _isFavorited
+                                  ? Image.asset(
+                                      'assets/images/Property 1=Variant2.png',
+                                      fit: BoxFit.contain,
+                                    )
+                                  : Image.asset(
+                                      'assets/images/Property 1=Default (1).png',
+                                      fit: BoxFit.contain,
+                                    ),
+                            ),
                           ),
                         ),
                       ],
                     ),
-                    // Increment button
-                    ElevatedButton(
-                      onPressed: () {
-                        // Increment logic here
-                      },
-                      style: ElevatedButton.styleFrom(
-                        padding: EdgeInsets.symmetric(horizontal: 10.w),
+                    SizedBox(height: 16),
+                    Expanded(
+                      child: Text(
+                        widget.product.title ?? "",
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
-                      child:
-                          Icon(Icons.add), // Use Icon widget for the add icon
+                    ),
+                    SizedBox(height: 8),
+                    Expanded(
+                      child: Text(
+                        "EGP ${widget.product.price}",
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                          fontSize: 16,
+                          color: Colors.green,
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: 8),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Row(
+                          children: [
+                            Icon(
+                              Icons.star,
+                              color: Colors.yellow,
+                              size: 16,
+                            ),
+                            SizedBox(width: 5.w),
+                            Text(
+                              "${widget.product.ratingsAverage}",
+                              style: TextStyle(
+                                fontSize: 14,
+                                color: Colors.grey,
+                              ),
+                            ),
+                            Text(
+                              " (${widget.product.ratingsQuantity})",
+                              style: TextStyle(
+                                fontSize: 14,
+                                color: Colors.grey,
+                              ),
+                            ),
+                          ],
+                        ),
+                        BlocBuilder<ProductViewModel, Productstate>(
+                          builder: (context, state) {
+                            return ElevatedButton(
+                              onPressed: state is addCartTabLoadinglstate
+                                  ? null // Disable button if loading
+                                  : () {
+                                      print(
+                                          "Adding product to cart with ID: ${widget.product.id}");
+
+                                      if (widget.product.id != null &&
+                                          widget.product.id!.isNotEmpty) {
+                                        ProductViewModel.get(context)
+                                            .addToCart(widget.product.id!);
+
+                                        print(
+                                            "Product added to cart successfully");
+                                      } else {
+                                        print("Product ID is null or invalid");
+                                      }
+                                    },
+                              style: ElevatedButton.styleFrom(
+                                padding: EdgeInsets.symmetric(horizontal: 5.w),
+                              ),
+                              child: state is addCartTabLoadinglstate
+                                  ? CircularProgressIndicator() // Show loading indicator
+                                  : Icon(
+                                      Icons.add_circle_rounded,
+                                      color: AppColors.primaryColor,
+                                    ),
+                            );
+                          },
+                        ),
+                      ],
                     ),
                   ],
                 ),
-              ],
-            ),
-          ),
-        ],
-      ),
+              ),
+            );
+          },
+        );
+      },
     );
   }
 }

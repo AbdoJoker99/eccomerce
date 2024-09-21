@@ -4,7 +4,8 @@ import 'package:ecomm/homescreen/productlist/widgets/size&color/ColorButton.dart
 import 'package:ecomm/homescreen/productlist/widgets/size&color/SizeButton.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_image_slideshow/flutter_image_slideshow.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart'; // Import the image_slideshow package
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:readmore/readmore.dart'; // Import the image_slideshow package
 
 class ProductDescription extends StatefulWidget {
   static const String routeName = "desc";
@@ -39,7 +40,7 @@ class _ProductDescriptionState extends State<ProductDescription> {
       appBar: AppBar(
         centerTitle: true,
         title: Text(
-          "Product Details",
+          "product details",
           style: TextStyle(color: Colors.blue),
         ),
         actions: [
@@ -90,13 +91,12 @@ class _ProductDescriptionState extends State<ProductDescription> {
                 ),
               ),
               SizedBox(height: 20.h),
-              // Add more widgets here like product description, price, etc.
               Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Expanded(
                     child: Text(
-                      "Title",
+                      "${args.title}",
                       style: Theme.of(context).textTheme.titleMedium!.copyWith(
                             color: AppColors.primaryColor,
                             fontSize: 24,
@@ -104,7 +104,7 @@ class _ProductDescriptionState extends State<ProductDescription> {
                     ),
                   ),
                   Text(
-                    "EGP 2000",
+                    "EGP ${args.price}",
                     style: Theme.of(context).textTheme.titleMedium!.copyWith(
                           color: AppColors.primaryColor,
                           fontSize: 24,
@@ -125,7 +125,7 @@ class _ProductDescriptionState extends State<ProductDescription> {
                       borderRadius: BorderRadius.circular(12.0),
                       border: Border.all(color: Colors.grey.shade300),
                     ),
-                    child: Text('Sold'),
+                    child: Text('Sold ${args.sold}'),
                   ),
                   SizedBox(width: 8.w), // Spacing between elements
                   // Star rating and reviews
@@ -133,7 +133,7 @@ class _ProductDescriptionState extends State<ProductDescription> {
                     children: [
                       Icon(Icons.star, color: Colors.amber, size: 16),
                       Text(
-                        'avg_rating',
+                        '${args.ratingsAverage}',
                         style: TextStyle(fontSize: 14, color: Colors.black87),
                       ),
                     ],
@@ -175,17 +175,16 @@ class _ProductDescriptionState extends State<ProductDescription> {
                 ],
               ),
               SizedBox(height: 20),
-              Row(
-                children: [
-                  Text(
-                    ' Description in  details',
-                    style: TextStyle(color: Colors.grey[600]),
-                  ),
-                  SizedBox(height: 8.h),
-                ],
+              ReadMoreText(
+                '${args.description}',
+                trimMode: TrimMode.Line,
+                trimLines: 2,
+                colorClickableText: Colors.pink,
+                trimCollapsedText: 'Show more',
+                trimExpandedText: 'Show less',
+                moreStyle: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
               ),
               SizedBox(height: 8.h),
-
               // Size section
               Text(
                 'Size',
@@ -206,7 +205,6 @@ class _ProductDescriptionState extends State<ProductDescription> {
                 }).toList(),
               ),
               SizedBox(height: 16),
-
               // Color section
               Text(
                 'Color',
@@ -239,13 +237,12 @@ class _ProductDescriptionState extends State<ProductDescription> {
                         style: TextStyle(fontSize: 14, color: Colors.grey[600]),
                       ),
                       Text(
-                        'EGP 3,500',
+                        'EGP ${args.price}',
                         style: TextStyle(
                             fontWeight: FontWeight.bold, fontSize: 18),
                       ),
                     ],
                   ),
-
                   // Add to cart button
                   ElevatedButton.icon(
                     onPressed: () {},

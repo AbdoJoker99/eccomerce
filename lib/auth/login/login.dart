@@ -1,5 +1,6 @@
 import 'package:ecomm/app_colors.dart';
 import 'package:ecomm/auth/login/login_cubit/login_states.dart';
+import 'package:ecomm/share_prefrance_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -47,6 +48,8 @@ class _LoginState extends State<Login> {
             content: 'Login successful!',
           );
           Navigator.of(context).pushNamed(HomeScreen.routeName);
+          SharedPreferenceUtils.saveData(
+              key: "token", value: state.response.token);
         }
       },
       child: Scaffold(

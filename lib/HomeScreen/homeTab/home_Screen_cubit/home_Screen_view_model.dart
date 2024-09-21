@@ -3,7 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../Profile/ProfileTab.dart';
-import '../../favoriteScreen/FavoriteTab.dart';
+import '../../favoriteScreen/Widgets/FavoriteTab.dart';
 import '../hometab.dart';
 import 'home_states.dart';
 
