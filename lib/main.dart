@@ -1,4 +1,5 @@
 import 'package:ecomm/HomeScreen/Productlist/cubit/ProductViewmodel.dart';
+import 'package:ecomm/HomeScreen/cart_screen/cubit/cartViewModel.dart';
 import 'package:ecomm/homescreen/Productlist/ProductListTab.dart';
 import 'package:ecomm/share_prefrance_utils.dart';
 import 'package:ecomm/splashscreen.dart';
@@ -25,6 +26,7 @@ void main() async {
       providers: [
         // Register the blocs/cubits that the app will use
         BlocProvider(create: (context) => ProductViewModel()),
+        BlocProvider(create: (context) => Cartviewmodel()),
         // You can add more BlocProviders as needed
       ],
       child: MyApp(),

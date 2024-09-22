@@ -4,6 +4,7 @@ import 'package:dartz/dartz.dart';
 import 'package:ecomm/Data/model/failures.dart';
 import 'package:ecomm/Data/model/response/ProductResponse.dart';
 import 'package:ecomm/Data/model/response/categoryOrBrandResponse.dart';
+import 'package:ecomm/Data/model/response/getProductCartResponse.dart';
 import 'package:ecomm/data/model/request/loginRequest.dart';
 import 'package:ecomm/data/model/response/Register_Response.dart';
 import 'package:ecomm/data/model/response/login_Response.dart';
@@ -127,7 +128,7 @@ class ApiManager {
       var response = await http.post(
         url,
         body: {"productId": productId},
-        headers: {"Authorization": "Bearer ${token.toString()}"},
+        headers: {"token": "Bearer ${token.toString()}"},
       );
 
       // Handle the HTTP status codes properly
@@ -135,6 +136,42 @@ class ApiManager {
         var json = jsonDecode(response.body);
         var addCartResponse = AddCartResponse.fromJson(json);
         return Right(addCartResponse);
+      } else if (response.statusCode == 401) {
+        return Left(ServerError(errorMessage: "Unauthorized: Invalid token"));
+      } else {
+        // Decode the error message from the response
+        var json = jsonDecode(response.body);
+        String errorMessage = json['message'] ?? 'Unknown error';
+        return Left(ServerError(errorMessage: "Error: $errorMessage"));
+      }
+    } catch (e) {
+      // Catching exceptions
+      return Left(ServerError(errorMessage: "Exception: ${e.toString()}"));
+    }
+  }
+
+  static Future<Either<Failures, GetProductCartResponse>>
+      getProductCart() async {
+    Uri url = Uri.https(baseUrl, EndPoints.addToCart);
+
+    try {
+      // Retrieve the token safely
+      var token = SharedPreferenceUtils.getData(key: "token");
+
+      if (token == null || token.toString().isEmpty) {
+        return Left(ServerError(errorMessage: "Token not found or invalid"));
+      }
+
+      var response = await http.get(
+        url,
+        headers: {"token": "${token.toString()}"},
+      );
+
+      // Handle the HTTP status codes properly
+      if (response.statusCode >= 200 && response.statusCode < 300) {
+        var json = jsonDecode(response.body);
+        var getCartResponse = GetProductCartResponse.fromJson(json);
+        return Right(getCartResponse);
       } else if (response.statusCode == 401) {
         return Left(ServerError(errorMessage: "Unauthorized: Invalid token"));
       } else {
