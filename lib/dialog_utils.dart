@@ -1,18 +1,25 @@
 import 'package:flutter/material.dart';
 
 class DialogUtils {
-  static void showLoading(BuildContext context, String loadingLabel) {
+  static void showLoading(
+      {required BuildContext context,
+      required String loadingLabel,
+      bool barrierDismissible = true}) {
     showDialog(
+        barrierDismissible: barrierDismissible,
         context: context,
         builder: (context) {
           return AlertDialog(
             content: Row(
               children: [
                 CircularProgressIndicator(),
-                SizedBox(
-                  width: 15,
-                ),
-                Text(loadingLabel)
+                Padding(
+                  padding: const EdgeInsets.all(10.0),
+                  child: Text(
+                    loadingLabel,
+                    style: Theme.of(context).textTheme.bodyMedium,
+                  ),
+                )
               ],
             ),
           );
@@ -23,43 +30,42 @@ class DialogUtils {
     Navigator.pop(context);
   }
 
-  static void showMessage({
-    required BuildContext context,
-    required String content,
-    String title = "",
-    String? posActionName,
-    Function? posAction,
-    String? negActionName,
-    Function? negAction,
-  }) {
+  static void showMessage(
+      {required BuildContext context,
+      required String content,
+      String title = 'Title',
+      String? posActionName,
+      Function? posAction,
+      String? negActionName,
+      Function? negAction}) {
     List<Widget> actions = [];
     if (posActionName != null) {
       actions.add(ElevatedButton(
-        onPressed: () {
-          Navigator.pop(context);
-          posAction?.call();
-        },
-        child: Text(posActionName),
-      )); // ElevatedButton
+          onPressed: () {
+            Navigator.pop(context);
+            posAction?.call();
+          },
+          child: Text(posActionName)));
     }
     if (negActionName != null) {
       actions.add(ElevatedButton(
-        onPressed: () {
-          Navigator.pop(context);
-          negAction?.call();
-        },
-        child: Text(negActionName),
-      )); // ElevatedButton
+          onPressed: () {
+            Navigator.pop(context);
+            negAction?.call();
+          },
+          child: Text(negActionName)));
     }
     showDialog(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          content: Text(content),
-          title: Text(title),
-          actions: actions,
-        ); // AlertDialog
-      },
-    );
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            content: Text(
+              content,
+              style: Theme.of(context).textTheme.bodyMedium,
+            ),
+            title: Text(title),
+            actions: actions,
+          );
+        });
   }
 }

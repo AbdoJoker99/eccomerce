@@ -4,7 +4,7 @@ class RegisterResponse {
   RegisterResponse.fromJson(dynamic json) {
     message = json['message'];
     statusMsg = json['statusMsg'];
-    user = json['user'];
+    user = json['user'] != null ? User.fromJson(json['user']) : null;
     token = json['token'];
   }
   String? message;
