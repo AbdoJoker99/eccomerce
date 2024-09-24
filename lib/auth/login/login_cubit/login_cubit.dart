@@ -12,8 +12,8 @@ class loginCubit extends Cubit<loginStates> {
   static final formKey = GlobalKey<FormState>();
 
   // Controllers for email and password input fields
-  final emailController = TextEditingController();
-  final passwordController = TextEditingController();
+  final emailController = TextEditingController(text: "chessjoker27@gmail.com");
+  final passwordController = TextEditingController(text: '1234567');
 
   // Method to handle the login logic
   void Login() async {

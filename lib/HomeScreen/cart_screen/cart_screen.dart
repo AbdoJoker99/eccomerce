@@ -1,76 +1,126 @@
-import 'package:ecomm/HomeScreen/cart_screen/cubit/cartViewModel.dart';
-import 'package:ecomm/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
+import '../../app_colors.dart';
 import 'CartItem.dart';
-import 'CheckoutRow.dart';
 import 'cubit/cartState.dart';
+import 'cubit/cartViewModel.dart';
 
-class CartScreen extends StatefulWidget {
-  static const String routeName = "cart";
-  const CartScreen({super.key});
+class CartScreen extends StatelessWidget {
+  static const String routeName = 'cart_screen';
 
-  @override
-  State<CartScreen> createState() => _CartScreenState();
-}
-
-class _CartScreenState extends State<CartScreen> {
-  Cartviewmodel viewmodel = Cartviewmodel();
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder(
-      bloc: viewmodel..getCart(),
-      builder: (BuildContext context, state) {
-        return Scaffold(
-          appBar: AppBar(
-            centerTitle: true,
-            title: const Text(
-              "Cart",
-              style: TextStyle(color: Colors.blue),
+    return BlocProvider(
+      create: (context) => CartViewModel()..getCart(),
+      child: Scaffold(
+        appBar: AppBar(
+          surfaceTintColor: Colors.transparent,
+          centerTitle: true,
+          elevation: 0,
+          title: const Text('Product Details'),
+          backgroundColor: Colors.transparent,
+          foregroundColor: AppColors.primaryColor,
+          titleTextStyle: Theme.of(context).textTheme.titleLarge!.copyWith(
+              fontSize: 20.sp,
+              color: AppColors.primaryColor,
+              fontWeight: FontWeight.bold),
+          actions: [
+            IconButton(
+              onPressed: () {},
+              padding: EdgeInsets.zero,
+              icon: Icon(Icons.search),
             ),
-            actions: [
-              IconButton(onPressed: () {}, icon: const Icon(Icons.search)),
-              IconButton(
-                  onPressed: () {}, icon: const Icon(Icons.shopping_cart)),
-            ],
-          ),
-          body: BlocBuilder<Cartviewmodel, cartstate>(
-            bloc: Cartviewmodel.get(context)..getCart(),
-            builder: (BuildContext context, state) {
-              state is getCartTabSuccsesState
-                  ? Column(
+            IconButton(
+                padding: EdgeInsets.zero,
+                onPressed: () {},
+                icon: Icon(Icons.shopping_cart_checkout_outlined))
+          ],
+        ),
+        body: BlocBuilder<CartViewModel, CartStates>(
+          builder: (context, state) {
+            if (state is GetCartSuccessState) {
+              return Column(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Expanded(
+                      child: ListView.builder(
+                    itemBuilder: (context, index) {
+                      return CartItem(
+                        productCart:
+                            state.getCartResponse.data!.products![index],
+                      );
+                    },
+                    itemCount: state.getCartResponse.data!.products!.length,
+                  )),
+                  Padding(
+                    padding:
+                        EdgeInsets.only(bottom: 98.h, left: 16.w, right: 16.w),
+                    child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Expanded(
-                          child: ListView.builder(
-                            itemBuilder: (context, index) {
-                              return Padding(
-                                padding: const EdgeInsets.symmetric(
-                                    vertical: 8.0), // Spacing between items
-                                child: CartItem(
-                                  title: 'Item Title $index',
-                                  imageUrl: "assets/images/music.png",
-                                  price:
-                                      100.0, // Example price, replace with actual value
-                                ),
-                              );
-                            },
-                            itemCount:
-                                5, // Example item count, adjust as needed
+                        Column(
+                          children: [
+                            Padding(
+                              padding: EdgeInsets.only(bottom: 12.h),
+                              child: Text(
+                                'Total Price',
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .titleMedium
+                                    ?.copyWith(
+                                        color: AppColors.backgroundDarkColor),
+                              ),
+                            ),
+                            Text(
+                              'EGP ${state.getCartResponse.data!.totalCartPrice}',
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .titleMedium!
+                                  .copyWith(
+                                      fontWeight: FontWeight.bold,
+                                      color: AppColors.primaryColor),
+                            )
+                          ],
+                        ),
+                        InkWell(
+                          onTap: () {
+                            // Implement your checkout logic here
+                          },
+                          child: Container(
+                            padding: EdgeInsets.symmetric(
+                                vertical: 12.h, horizontal: 24.w),
+                            decoration: BoxDecoration(
+                              color: AppColors.primaryColor,
+                              borderRadius: BorderRadius.circular(8.r),
+                            ),
+                            child: Text(
+                              'Checkout',
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .titleMedium!
+                                  .copyWith(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.bold),
+                            ),
                           ),
                         ),
-                        const CheckoutRow(),
                       ],
-                    )
-                  : Center(
-                      child: CircularProgressIndicator(
-                      color: AppColors.primaryColor,
-                    ));
-            },
-          ),
-        );
-      },
+                    ),
+                  ),
+                ],
+              );
+            } else {
+              return Center(
+                child: CircularProgressIndicator(
+                  color: AppColors.primaryColor,
+                ),
+              );
+            }
+          },
+        ),
+      ),
     );
   }
 }

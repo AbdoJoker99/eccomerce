@@ -118,71 +118,103 @@ class ApiManager {
     Uri url = Uri.https(baseUrl, EndPoints.addToCart);
 
     try {
-      // Retrieve the token safely
-      var token = SharedPreferenceUtils.getData(key: "token");
-
-      if (token == null || token.toString().isEmpty) {
-        return Left(ServerError(errorMessage: "Token not found or invalid"));
-      }
-
-      var response = await http.post(
-        url,
-        body: {"productId": productId},
-        headers: {"token": "Bearer ${token.toString()}"},
-      );
-
-      // Handle the HTTP status codes properly
+      var token = SharedPreferenceUtils.getData(key: 'token');
+      var response = await http.post(url,
+          body: {'productId': productId}, headers: {'token': token.toString()});
+      var bodyString = response.body;
+      var json = jsonDecode(bodyString);
+      var addCartResponse = AddCartResponse.fromJson(json);
       if (response.statusCode >= 200 && response.statusCode < 300) {
-        var json = jsonDecode(response.body);
-        var addCartResponse = AddCartResponse.fromJson(json);
         return Right(addCartResponse);
-      } else if (response.statusCode == 401) {
-        return Left(ServerError(errorMessage: "Unauthorized: Invalid token"));
       } else {
-        // Decode the error message from the response
-        var json = jsonDecode(response.body);
-        String errorMessage = json['message'] ?? 'Unknown error';
-        return Left(ServerError(errorMessage: "Error: $errorMessage"));
+        return Left(ServerError(errorMessage: addCartResponse.message!));
       }
     } catch (e) {
-      // Catching exceptions
-      return Left(ServerError(errorMessage: "Exception: ${e.toString()}"));
+      return Left(NetworkError(errorMessage: e.toString()));
     }
   }
 
-  static Future<Either<Failures, GetProductCartResponse>>
-      getProductCart() async {
+  static Future<Either<Failures, GetProductCartResponse>> getCart() async {
     Uri url = Uri.https(baseUrl, EndPoints.addToCart);
 
     try {
-      // Retrieve the token safely
-      var token = SharedPreferenceUtils.getData(key: "token");
-
-      if (token == null || token.toString().isEmpty) {
-        return Left(ServerError(errorMessage: "Token not found or invalid"));
-      }
-
-      var response = await http.get(
-        url,
-        headers: {"token": "${token.toString()}"},
-      );
-
-      // Handle the HTTP status codes properly
+      var token = SharedPreferenceUtils.getData(key: 'token');
+      var response = await http.get(url, headers: {'token': token.toString()});
+      var bodyString = response.body;
+      var json = jsonDecode(bodyString);
+      var getCartResponse = GetProductCartResponse.fromJson(json);
       if (response.statusCode >= 200 && response.statusCode < 300) {
-        var json = jsonDecode(response.body);
-        var getCartResponse = GetProductCartResponse.fromJson(json);
         return Right(getCartResponse);
-      } else if (response.statusCode == 401) {
-        return Left(ServerError(errorMessage: "Unauthorized: Invalid token"));
       } else {
-        // Decode the error message from the response
-        var json = jsonDecode(response.body);
-        String errorMessage = json['message'] ?? 'Unknown error';
-        return Left(ServerError(errorMessage: "Error: $errorMessage"));
+        return Left(ServerError(errorMessage: getCartResponse.message!));
       }
     } catch (e) {
-      // Catching exceptions
-      return Left(ServerError(errorMessage: "Exception: ${e.toString()}"));
+      return Left(NetworkError(errorMessage: e.toString()));
+    }
+  }
+
+  static Future<Either<Failures, GetProductCartResponse>> deleteItemInCart(
+      String productId) async {
+    Uri url = Uri.https(baseUrl, '${EndPoints.addToCart}/$productId');
+
+    try {
+      var token = SharedPreferenceUtils.getData(key: 'token');
+      var response =
+          await http.delete(url, headers: {'token': token.toString()});
+      var bodyString = response.body;
+      var json = jsonDecode(bodyString);
+      var deleteItemInCartResponse = GetProductCartResponse.fromJson(json);
+      if (response.statusCode >= 200 && response.statusCode < 300) {
+        return Right(deleteItemInCartResponse);
+      } else {
+        return Left(
+            ServerError(errorMessage: deleteItemInCartResponse.message!));
+      }
+    } catch (e) {
+      return Left(NetworkError(errorMessage: e.toString()));
+    }
+  }
+
+  static Future<Either<Failures, GetProductCartResponse>> updateCountInCart(
+      String productId, int count) async {
+    Uri url = Uri.https(baseUrl, '${EndPoints.addToCart}/$productId');
+
+    try {
+      var token = SharedPreferenceUtils.getData(key: 'token');
+      var response = await http.put(url,
+          body: {'count': '$count'}, headers: {'token': token.toString()});
+      var bodyString = response.body;
+      var json = jsonDecode(bodyString);
+      var updateCountInCartResponse = GetProductCartResponse.fromJson(json);
+      if (response.statusCode >= 200 && response.statusCode < 300) {
+        return Right(updateCountInCartResponse);
+      } else {
+        return Left(ServerError(
+          errorMessage: updateCountInCartResponse.message!,
+        ));
+      }
+    } catch (e) {
+      return Left(NetworkError(errorMessage: e.toString()));
+    }
+  }
+
+  static Future<ProductResponse> getFavouriteProducts() async {
+    try {
+      Uri url = Uri.https(baseUrl, EndPoints.getFavouriteProducts);
+      var response = await http.post(url);
+      return ProductResponse.fromJson(jsonDecode(response.body));
+    } catch (e) {
+      throw e;
+    }
+  }
+
+  static Future<ProductResponse> getProfile() async {
+    try {
+      Uri url = Uri.https(baseUrl, EndPoints.getProfile);
+      var response = await http.post(url);
+      return ProductResponse.fromJson(jsonDecode(response.body));
+    } catch (e) {
+      throw e;
     }
   }
 }

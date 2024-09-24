@@ -1,25 +1,26 @@
 class AddCartResponse {
-  AddCartResponse(
-      {this.status,
-      this.message,
-      this.numOfCartItems,
-      this.cartId,
-      this.data,
-      this.statusMsg});
+  AddCartResponse({
+    this.status,
+    this.statusMsg,
+    this.message,
+    this.numOfCartItems,
+    this.cartId,
+    this.data,
+  });
 
   AddCartResponse.fromJson(dynamic json) {
     status = json['status'];
-    message = json['message'];
     statusMsg = json['statusMsg'];
+    message = json['message'];
     numOfCartItems = json['numOfCartItems'];
     cartId = json['cartId'];
-    data = json['data'] != null ? AddDataCart.fromJson(json['data']) : null;
+    data = json['data'] != null ? AddCartData.fromJson(json['data']) : null;
   }
   String? status;
   String? message;
   num? numOfCartItems;
   String? cartId;
-  AddDataCart? data;
+  AddCartData? data;
   String? statusMsg;
 
   Map<String, dynamic> toJson() {
@@ -35,8 +36,8 @@ class AddCartResponse {
   }
 }
 
-class AddDataCart {
-  AddDataCart({
+class AddCartData {
+  AddCartData({
     this.id,
     this.cartOwner,
     this.products,
@@ -46,7 +47,7 @@ class AddDataCart {
     this.totalCartPrice,
   });
 
-  AddDataCart.fromJson(dynamic json) {
+  AddCartData.fromJson(dynamic json) {
     id = json['_id'];
     cartOwner = json['cartOwner'];
     if (json['products'] != null) {

@@ -133,19 +133,8 @@ class _GridViewCardItemState extends State<GridViewCardItem> {
                               onPressed: state is addCartTabLoadinglstate
                                   ? null // Disable button if loading
                                   : () {
-                                      print(
-                                          "Adding product to cart with ID: ${widget.product.id}");
-
-                                      if (widget.product.id != null &&
-                                          widget.product.id!.isNotEmpty) {
-                                        ProductViewModel.get(context)
-                                            .addToCart(widget.product.id!);
-
-                                        print(
-                                            "Product added to cart successfully");
-                                      } else {
-                                        print("Product ID is null or invalid");
-                                      }
+                                      ProductViewModel.get(context)
+                                          .addToCart(widget.product.id ?? "");
                                     },
                               style: ElevatedButton.styleFrom(
                                 padding: EdgeInsets.symmetric(horizontal: 5.w),

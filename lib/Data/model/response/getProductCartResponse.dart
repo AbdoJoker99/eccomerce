@@ -1,26 +1,30 @@
+import 'ProductResponse.dart';
+import 'categoryOrBrandResponse.dart';
+
 class GetProductCartResponse {
-  GetProductCartResponse(
-      {this.status,
-      this.numOfCartItems,
-      this.cartId,
-      this.data,
-      this.message,
-      this.statusMsg});
+  GetProductCartResponse({
+    this.status,
+    this.statusMsg,
+    this.message,
+    this.numOfCartItems,
+    this.cartId,
+    this.data,
+  });
 
   GetProductCartResponse.fromJson(dynamic json) {
     status = json['status'];
-    message = json['message'];
     statusMsg = json['statusMsg'];
+    message = json['message'];
     numOfCartItems = json['numOfCartItems'];
     cartId = json['cartId'];
-    data = json['data'] != null ? getProductCart.fromJson(json['data']) : null;
+    data = json['data'] != null ? GetCartData.fromJson(json['data']) : null;
   }
   String? status;
   num? numOfCartItems;
   String? cartId;
-  getProductCart? data;
-  String? message;
+  GetCartData? data;
   String? statusMsg;
+  String? message;
 
   Map<String, dynamic> toJson() {
     final map = <String, dynamic>{};
@@ -34,8 +38,8 @@ class GetProductCartResponse {
   }
 }
 
-class getProductCart {
-  getProductCart({
+class GetCartData {
+  GetCartData({
     this.id,
     this.cartOwner,
     this.products,
@@ -45,13 +49,13 @@ class getProductCart {
     this.totalCartPrice,
   });
 
-  getProductCart.fromJson(dynamic json) {
+  GetCartData.fromJson(dynamic json) {
     id = json['_id'];
     cartOwner = json['cartOwner'];
     if (json['products'] != null) {
       products = [];
       json['products'].forEach((v) {
-        products?.add(Products.fromJson(v));
+        products?.add(GetProductCart.fromJson(v));
       });
     }
     createdAt = json['createdAt'];
@@ -61,7 +65,7 @@ class getProductCart {
   }
   String? id;
   String? cartOwner;
-  List<Products>? products;
+  List<GetProductCart>? products;
   String? createdAt;
   String? updatedAt;
   num? v;
@@ -82,24 +86,24 @@ class getProductCart {
   }
 }
 
-class Products {
-  Products({
+class GetProductCart {
+  GetProductCart({
     this.count,
     this.id,
     this.product,
     this.price,
   });
 
-  Products.fromJson(dynamic json) {
+  GetProductCart.fromJson(dynamic json) {
     count = json['count'];
     id = json['_id'];
     product =
-        json['product'] != null ? Product.fromJson(json['product']) : null;
+        json['product'] != null ? GetProduct.fromJson(json['product']) : null;
     price = json['price'];
   }
   num? count;
   String? id;
-  Product? product;
+  GetProduct? product;
   num? price;
 
   Map<String, dynamic> toJson() {
@@ -114,8 +118,8 @@ class Products {
   }
 }
 
-class Product {
-  Product({
+class GetProduct {
+  GetProduct({
     this.subcategory,
     this.id,
     this.title,
@@ -126,7 +130,7 @@ class Product {
     this.ratingsAverage,
   });
 
-  Product.fromJson(dynamic json) {
+  GetProduct.fromJson(dynamic json) {
     if (json['subcategory'] != null) {
       subcategory = [];
       json['subcategory'].forEach((v) {
@@ -137,9 +141,11 @@ class Product {
     title = json['title'];
     quantity = json['quantity'];
     imageCover = json['imageCover'];
-    category =
-        json['category'] != null ? Category.fromJson(json['category']) : null;
-    brand = json['brand'] != null ? Brand.fromJson(json['brand']) : null;
+    category = json['category'] != null
+        ? CategoryOrBrand.fromJson(json['category'])
+        : null;
+    brand =
+        json['brand'] != null ? CategoryOrBrand.fromJson(json['brand']) : null;
     ratingsAverage = json['ratingsAverage'];
     id = json['id'];
   }
@@ -148,8 +154,8 @@ class Product {
   String? title;
   num? quantity;
   String? imageCover;
-  Category? category;
-  Brand? brand;
+  CategoryOrBrand? category;
+  CategoryOrBrand? brand;
   num? ratingsAverage;
 
   Map<String, dynamic> toJson() {
@@ -169,93 +175,6 @@ class Product {
     }
     map['ratingsAverage'] = ratingsAverage;
     map['id'] = id;
-    return map;
-  }
-}
-
-class Brand {
-  Brand({
-    this.id,
-    this.name,
-    this.slug,
-    this.image,
-  });
-
-  Brand.fromJson(dynamic json) {
-    id = json['_id'];
-    name = json['name'];
-    slug = json['slug'];
-    image = json['image'];
-  }
-  String? id;
-  String? name;
-  String? slug;
-  String? image;
-
-  Map<String, dynamic> toJson() {
-    final map = <String, dynamic>{};
-    map['_id'] = id;
-    map['name'] = name;
-    map['slug'] = slug;
-    map['image'] = image;
-    return map;
-  }
-}
-
-class Category {
-  Category({
-    this.id,
-    this.name,
-    this.slug,
-    this.image,
-  });
-
-  Category.fromJson(dynamic json) {
-    id = json['_id'];
-    name = json['name'];
-    slug = json['slug'];
-    image = json['image'];
-  }
-  String? id;
-  String? name;
-  String? slug;
-  String? image;
-
-  Map<String, dynamic> toJson() {
-    final map = <String, dynamic>{};
-    map['_id'] = id;
-    map['name'] = name;
-    map['slug'] = slug;
-    map['image'] = image;
-    return map;
-  }
-}
-
-class Subcategory {
-  Subcategory({
-    this.id,
-    this.name,
-    this.slug,
-    this.category,
-  });
-
-  Subcategory.fromJson(dynamic json) {
-    id = json['_id'];
-    name = json['name'];
-    slug = json['slug'];
-    category = json['category'];
-  }
-  String? id;
-  String? name;
-  String? slug;
-  String? category;
-
-  Map<String, dynamic> toJson() {
-    final map = <String, dynamic>{};
-    map['_id'] = id;
-    map['name'] = name;
-    map['slug'] = slug;
-    map['category'] = category;
     return map;
   }
 }

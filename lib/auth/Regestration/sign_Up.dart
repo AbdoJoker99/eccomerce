@@ -27,7 +27,8 @@ class _SignupState extends State<Signup> {
       child: BlocListener<RegisterCubit, RegisterStates>(
         listener: (context, state) {
           if (state is RegisterLoadingState) {
-            DialogUtils.showLoading(context, 'Loading...');
+            DialogUtils.showLoading(
+                context: context, loadingLabel: 'loading...');
           } else if (state is RegisterErrorState) {
             DialogUtils.hideLoading(context);
             DialogUtils.showMessage(

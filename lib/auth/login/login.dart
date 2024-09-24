@@ -34,7 +34,7 @@ class _LoginState extends State<Login> {
       bloc: login,
       listener: (context, state) {
         if (state is loginLoadingState) {
-          DialogUtils.showLoading(context, 'Waiting...');
+          DialogUtils.showLoading(context: context, loadingLabel: 'Waiting...');
         } else if (state is loginErrorState) {
           DialogUtils.hideLoading(context);
           DialogUtils.showMessage(

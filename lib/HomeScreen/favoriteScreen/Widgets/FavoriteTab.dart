@@ -1,7 +1,7 @@
+import 'package:ecomm/homescreen/homeTab/widgets/CustomSearchWithShoppingCart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-import '../../homeTab/widgets/CustomSearchWithShoppingCart.dart';
 import 'favoriteCartItem.dart';
 
 class Favoritetab extends StatefulWidget {

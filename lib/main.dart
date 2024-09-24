@@ -14,27 +14,40 @@ import 'homescreen/cart_screen/cart_screen.dart';
 import 'homescreen/home_Screen.dart';
 import 'homescreen/productlist/widgets/product_details_view.dart';
 import 'homescreen/profile/ProfileTab.dart';
+import 'myBlocObserver.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  Bloc.observer = MyBlocObserver();
 
-  // Initialize shared preferences
+  // Initialize Shared Preferences
   await SharedPreferenceUtils.init();
 
-  runApp(
-    MultiBlocProvider(
-      providers: [
-        // Register the blocs/cubits that the app will use
-        BlocProvider(create: (context) => ProductViewModel()),
-        BlocProvider(create: (context) => Cartviewmodel()),
-        // You can add more BlocProviders as needed
-      ],
-      child: MyApp(),
-    ),
-  );
+  // Determine the initial route based on the stored token
+  String route;
+  var token = SharedPreferenceUtils.getData(key: 'token');
+  if (token == null) {
+    route = Login.routeName;
+  } else {
+    route = HomeScreen.routeName;
+  }
+
+  // Start the app
+  runApp(MultiBlocProvider(
+    providers: [
+      BlocProvider(create: (context) => ProductViewModel()),
+      BlocProvider<CartViewModel>(
+        create: (context) => CartViewModel(),
+      )
+    ],
+    child: MyApp(route: route),
+  ));
 }
 
 class MyApp extends StatelessWidget {
+  final String route;
+  MyApp({required this.route});
+
   @override
   Widget build(BuildContext context) {
     return ScreenUtilInit(
@@ -44,7 +57,7 @@ class MyApp extends StatelessWidget {
       builder: (context, child) {
         return MaterialApp(
           debugShowCheckedModeBanner: false,
-          initialRoute: Login.routeName,
+          initialRoute: route,
           routes: {
             HomeScreen.routeName: (context) => HomeScreen(),
             Signup.routeName: (context) => Signup(),

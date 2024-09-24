@@ -47,7 +47,6 @@ class _CustomSearchWithShoppingCartState
                 Navigator.of(context).pushNamed(CartScreen.routeName);
               },
               child: Badge(
-                label: Text(viewModel.numOfCartItems.toString()),
                 child: Icon(Icons.shopping_cart),
               ),
             )),
